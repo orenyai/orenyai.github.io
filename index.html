@@ -1,149 +1,31 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой сайт с виджетом</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: #f8f9fa;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            color: #333;
-        }
-        
-        header {
-            padding: 20px;
-            text-align: center;
-            background: #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        
-        .widget-container {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 15px;
-            margin: 20px 0;
-            min-height: 500px;
-            position: relative;
-        }
-        
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #666;
-            font-style: italic;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 15px;
-            background: #343a40;
-            color: #fff;
-            font-size: 14px;
-        }
-        
-        .error-message {
-            display: none;
-            background: #fff3cd;
-            color: #856404;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 10px 0;
-            text-align: center;
-        }
-        
-        .retry-btn {
-            margin-top: 10px;
-            padding: 8px 16px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .retry-btn:hover {
-            background: #0069d9;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Мой профиль</title>
+  <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
+  <style>
+    body {
+      background-color: #101010;
+      color: #fff;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      font-size: 18px;
+      font-weight: normal;
+      opacity: 0.7;
+      margin-bottom: 30px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Мой виджет Common Ninja</h1>
-    </header>
-    
-    <div class="main-content">
-        <div class="widget-container">
-            <div id="loading" class="loading">Загрузка виджета...</div>
-            <div id="error-message" class="error-message"></div>
-            <div class="commonninja_component pid-af448099-06cb-463d-a02f-0d59b1893105"></div>
-        </div>
-    </div>
-    
-    <footer>
-        © 2023 Мой сайт с виджетом Common Ninja
-    </footer>
-
-    <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loadingElement = document.getElementById('loading');
-            const errorElement = document.getElementById('error-message');
-            
-            // Проверяем загрузку виджета
-            const checkWidget = setInterval(function() {
-                const widgetIframe = document.querySelector('.commonninja_component iframe');
-                const widgetError = document.querySelector('.commonninja_component .error');
-                
-                if (widgetIframe) {
-                    // Виджет загрузился успешно
-                    clearInterval(checkWidget);
-                    loadingElement.style.display = 'none';
-                } else if (widgetError) {
-                    // Обнаружена ошибка
-                    handleError(widgetError.textContent || 'Неизвестная ошибка при загрузке виджета');
-                }
-            }, 500);
-            
-            // Таймаут загрузки
-            setTimeout(function() {
-                clearInterval(checkWidget);
-                if (loadingElement.style.display !== 'none') {
-                    handleError('Виджет не загрузился в течение 15 секунд');
-                }
-            }, 15000);
-            
-            function handleError(message) {
-                clearInterval(checkWidget);
-                loadingElement.style.display = 'none';
-                errorElement.style.display = 'block';
-                errorElement.innerHTML = `
-                    <strong>Ошибка:</strong> ${message}<br><br>
-                    Пожалуйста, проверьте:<br>
-                    - Правильность ID виджета<br>
-                    - Что виджет опубликован в Common Ninja<br>
-                    - Что ваш домен добавлен в настройках виджета<br><br>
-                    <button class="retry-btn" onclick="window.location.reload()">Попробовать снова</button>
-                `;
-            }
-        });
-    </script>
+  <h1>нажми на плеер ниже</h1>
+  <div class="commonninja_component pid-746e004b-64ca-445d-a94f-f4f2e792c3b2"></div>
 </body>
 </html>
