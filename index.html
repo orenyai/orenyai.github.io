@@ -2,11 +2,10 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Мой профиль</title>
-  <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
+  <title>Профиль</title>
   <style>
     body {
-      background-color: #101010;
+      background-color: #0f0f0f;
       color: #fff;
       font-family: sans-serif;
       display: flex;
@@ -16,16 +15,23 @@
       height: 100vh;
       margin: 0;
     }
-    h1 {
-      font-size: 18px;
-      font-weight: normal;
-      opacity: 0.7;
-      margin-bottom: 30px;
+    button {
+      background: none;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #fff;
+      color: #000;
     }
   </style>
 </head>
 <body>
-  <h1>нажми на плеер ниже</h1>
-  <div class="commonninja_component pid-746e004b-64ca-445d-a94f-f4f2e792c3b2"></div>
+  <button onclick="document.getElementById('track').play()">▶️ Воспроизвести трек</button>
+  <audio id="track" src="https://files.catbox.moe/f3keh4.mp3"></audio>
 </body>
 </html>
