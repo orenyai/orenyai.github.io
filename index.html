@@ -1,626 +1,279 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!DOCTYPE html><html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orenai | Профиль</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            overflow: hidden;
-            height: 100vh;
-            background: #0f0f0f;
-            color: #fff;
-            display: flex;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orenai | Профиль</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #0f0f0f;
+      --panel-dark: rgba(26, 26, 26, 0.95);
+      --gradient-primary: linear-gradient(90deg, #ff00cc, #3333ff);
+      --text-glow-start: rgba(255, 0, 204, 0.4);
+      --text-glow-end: rgba(51, 51, 255, 0.7);
+      --overlay: rgba(0, 0, 0, 0.4);
+      --particle-color: rgba(255, 255, 255, 0.7);
+      --particle-glow: rgba(255, 255, 255, 0.9);
+      --transition-fast: 0.3s ease;
+      --transition-slow: 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-        /* Заставка */
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
-            cursor: pointer;
-        }
+body {
+  overflow: hidden;
+  height: 100vh;
+  background: var(--bg-dark);
+  color: #fff;
+  display: flex;
+}
 
-        .splash-content {
-            text-align: center;
-            padding: 20px;
-        }
+/* Splash */
+#splash-screen {
+  position: fixed; inset: 0;
+  background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity var(--transition-fast), transform var(--transition-slow);
+  cursor: pointer;
+}
 
-        .splash-text {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #ff00cc, #3333ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 20px rgba(255, 0, 204, 0.4);
-            animation: textGlow 2s infinite alternate;
-        }
+.splash-text {
+  font-size: 3rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 20px var(--text-glow-start);
+  animation: glow 2s infinite alternate;
+}
 
-        /* Основной контент */
-        .container {
-            display: flex;
-            width: 100%;
-            height: 100vh;
-            opacity: 0;
-            transition: opacity 1.5s ease;
-        }
+@keyframes glow {
+  from { text-shadow: 0 0 20px var(--text-glow-start); }
+  to { text-shadow: 0 0 30px var(--text-glow-end), 0 0 40px var(--text-glow-end); }
+}
 
-        /* Левая панель */
-        .left-panel {
-            flex: 0 0 45%;
-            min-width: 350px;
-            background: linear-gradient(135deg, rgba(44, 44, 44, 0.95), rgba(26, 26, 26, 0.95));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            z-index: 2;
-        }
+/* Layout */
+.container {
+  display: flex; width: 100%; height: 100vh;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
 
-        .left-panel::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, 
-                rgba(255,255,255,0.05) 25%, 
-                transparent 25%, 
-                transparent 50%, 
-                rgba(255,255,255,0.05) 50%, 
-                rgba(255,255,255,0.05) 75%, 
-                transparent 75%, 
-                transparent);
-            background-size: 60px 60px;
-            transform: rotate(30deg);
-            animation: animateBackground 3s linear infinite;
-            z-index: 0;
-        }
+.left-panel {
+  flex: 0 0 45%; min-width: 300px;
+  background: var(--panel-dark);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 2rem; position: relative; overflow: hidden;
+}
 
-        .profile-content {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            width: 100%;
-            max-width: 450px;
-            padding: 20px 0;
-        }
+.avatar {
+  width: 150px; height: 150px;
+  border-radius: 50%; padding: 4px;
+  background: var(--gradient-primary);
+  overflow: hidden;
+  box-shadow: 0 0 30px var(--text-glow-end);
+  transition: transform var(--transition-fast);
+}
 
-        .avatar {
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            border: 4px solid rgba(255,255,255,0.1);
-            background: linear-gradient(45deg, #ff00cc, #3333ff);
-            padding: 6px;
-            margin: 0 auto 20px;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(51, 51, 255, 0.3);
-            transition: all 0.4s ease;
-        }
+.avatar:hover { transform: scale(1.05); }
 
-        .avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(51, 51, 255, 0.6);
-        }
+.bio {
+  font-size: 1.1rem; color: #bbb;
+  margin: 1.5rem 0;
+  text-align: center;
+}
 
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+.music-player {
+  width: 100%; max-width: 400px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
 
-        .bio {
-            font-size: 1.1rem;
-            color: #bbb;
-            margin-bottom: 25px;
-            line-height: 1.6;
-            padding: 0 15px;
-        }
+.track-name { font-size: 1.2rem; font-weight: 600; text-align: center; }
 
-        /* Музыкальный плеер */
-        .music-player {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-        }
+.progress-area {
+  margin: 1rem 0; background: rgba(255,255,255,0.1);
+  border-radius: 10px; height: 6px; cursor: pointer;
+}
 
-        .track-info {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+.progress-bar {
+  height: 100%; width: 0;
+  background: var(--gradient-primary);
+  border-radius: 10px; transition: width 0.1s linear;
+}
 
-        .track-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
+.timer { display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; }
 
-        .progress-area {
-            height: 5px;
-            width: 100%;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            margin: 20px 0;
-            cursor: pointer;
-        }
+.controls { display: flex; justify-content: center; gap: 1rem; margin-top: 0.5rem; }
 
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff00cc, #3333ff);
-            border-radius: 10px;
-            position: relative;
-            transition: width 0.1s linear;
-        }
+.control-btn {
+  width: 45px; height: 45px; border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all var(--transition-fast);
+  border: none; color: #fff; font-size: 1.1rem;
+}
 
-        .progress-bar::before {
-            content: "";
-            position: absolute;
-            height: 12px;
-            width: 12px;
-            border-radius: 50%;
-            background: #fff;
-            right: -5px;
-            top: 50%;
-            transform: translateY(-50%);
-            box-shadow: 0 0 10px rgba(255, 0, 204, 0.8);
-        }
+.play-pause {
+  width: 55px; height: 55px;
+  background: var(--gradient-primary);
+  box-shadow: 0 0 15px var(--text-glow-end);
+}
 
-        .timer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-            font-size: 0.8rem;
-            color: #aaa;
-        }
+.control-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.2); }
+.play-pause:hover { box-shadow: 0 0 25px var(--text-glow-end); }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 25px;
-            margin-top: 15px;
-        }
+.right-panel {
+  flex: 1; background: url('https://files.catbox.moe/8klwnz.jpg') center/cover no-repeat;
+  position: relative; overflow: hidden;
+}
 
-        .control-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            color: #fff;
-            font-size: 1.1rem;
-        }
+.overlay { position: absolute; inset: 0; background: var(--overlay); }
+.particles { position: absolute; inset: 0; pointer-events: none; }
 
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
+.particle {
+  position: absolute; border-radius: 50%;
+  background: var(--particle-color);
+  box-shadow: 0 0 10px var(--particle-glow);
+  animation: fall linear forwards;
+}
 
-        .control-btn.play-pause {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(90deg, #ff00cc, #3333ff);
-            box-shadow: 0 0 15px rgba(51, 51, 255, 0.5);
-        }
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
 
-        .control-btn.play-pause:hover {
-            box-shadow: 0 0 25px rgba(51, 51, 255, 0.8);
-        }
+.orenai-btn {
+  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+  padding: 0.75rem 2rem;
+  background: var(--gradient-primary);
+  border-radius: 50px; font-weight: 600; text-decoration: none;
+  display: flex; align-items: center; gap: 0.5rem;
+  box-shadow: 0 5px 20px rgba(51,51,255,0.4);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
 
-        /* Правая панель с фоном */
-        .right-panel {
-            flex: 1;
-            background: url('https://files.catbox.moe/8klwnz.jpg') no-repeat center center;
-            background-size: cover;
-            position: relative;
-            overflow: hidden;
-        }
+.orenai-btn:hover { transform: translateX(-50%) scale(1.05); box-shadow: 0 8px 25px rgba(51,51,255,0.6); }
 
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1;
-        }
+/* Responsive */
+@media(max-width:900px) { .left-panel { flex:0 0 50%; } }
+@media(max-width:600px) { .left-panel { flex:0 0 55%; } }
 
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.7);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
-            animation: fall 15s infinite linear;
-        }
-
-        /* Кнопка Orenai */
-        .orenai-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 35px;
-            background: linear-gradient(90deg, #ff00cc, #3333ff);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-            box-shadow: 0 5px 20px rgba(51, 51, 255, 0.4);
-            transition: all 0.3s ease;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .orenai-btn:hover {
-            transform: translateX(-50%) scale(1.05);
-            box-shadow: 0 8px 25px rgba(51, 51, 255, 0.6);
-            letter-spacing: 2px;
-        }
-
-        /* Анимации */
-        @keyframes textGlow {
-            0% {
-                text-shadow: 0 0 20px rgba(255, 0, 204, 0.4);
-            }
-            100% {
-                text-shadow: 0 0 30px rgba(51, 51, 255, 0.7), 0 0 40px rgba(51, 51, 255, 0.4);
-            }
-        }
-
-        @keyframes animateBackground {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 60px 60px;
-            }
-        }
-
-        @keyframes fall {
-            0% {
-                transform: translateY(-100px) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(calc(100vh + 100px)) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        .fade-in {
-            opacity: 1 !important;
-        }
-
-        .slide-out {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-
-        /* Мобильная адаптация */
-        @media (max-width: 900px) {
-            .container {
-                flex-direction: row;
-            }
-            
-            .left-panel {
-                flex: 0 0 50%;
-                min-width: 300px;
-                padding: 15px;
-            }
-            
-            .avatar {
-                width: 130px;
-                height: 130px;
-                margin-bottom: 15px;
-            }
-            
-            .bio {
-                font-size: 1rem;
-                margin-bottom: 20px;
-            }
-            
-            .music-player {
-                padding: 15px;
-            }
-            
-            .track-name {
-                font-size: 1.2rem;
-            }
-            
-            .control-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-            
-            .control-btn.play-pause {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .splash-text {
-                font-size: 2.5rem;
-            }
-            
-            .orenai-btn {
-                font-size: 1rem;
-                padding: 10px 25px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .left-panel {
-                flex: 0 0 55%;
-                min-width: 250px;
-                padding: 10px;
-            }
-            
-            .avatar {
-                width: 110px;
-                height: 110px;
-            }
-            
-            .bio {
-                font-size: 0.9rem;
-                margin-bottom: 15px;
-            }
-            
-            .track-name {
-                font-size: 1.1rem;
-            }
-            
-            .controls {
-                gap: 20px;
-            }
-            
-            .splash-text {
-                font-size: 2rem;
-            }
-            
-            .progress-area {
-                margin: 15px 0;
-            }
-        }
-    </style>
+  </style>
 </head>
 <body>
-    <!-- Заставка -->
-    <div id="splash-screen">
-        <div class="splash-content">
-            <div class="splash-text">я хз че это за говно</div>
+  <!-- Splash -->
+  <div id="splash-screen"><div class="splash-text">нажми, чтобы войти</div></div>  <div class="container">
+    <div class="left-panel">
+      <div class="avatar"><img src="https://files.catbox.moe/quj9vo.jpg" alt="Аватар"></div>
+      <p class="bio">грызть какашке</p>
+      <div class="music-player">
+        <div class="track-name">Just Dance</div>
+        <div class="progress-area"><div class="progress-bar"></div></div>
+        <div class="timer"><span class="current">0:00</span><span class="duration">--:--</span></div>
+        <div class="controls">
+          <button class="control-btn play-pause" id="play-btn"><i class="fas fa-play"></i></button>
         </div>
-    </div>
+      </div>
+    </div><div class="right-panel">
+  <div class="overlay"></div>
+  <div class="particles" id="particles"></div>
+</div>
 
-    <!-- Основной контент -->
-    <div class="container">
-        <!-- Левая панель -->
-        <div class="left-panel">
-            <div class="profile-content">
-                <div class="avatar">
-                    <img src="https://files.catbox.moe/quj9vo.jpg" alt="Аватар">
-                </div>
-                <p class="bio">грызть какашке</p>
-                
-                <!-- Музыкальный плеер -->
-                <div class="music-player">
-                    <div class="track-info">
-                        <div class="track-name">Just Dance</div>
-                    </div>
-                    <div class="progress-area">
-                        <div class="progress-bar"></div>
-                    </div>
-                    <div class="timer">
-                        <span class="current">0:00</span>
-                        <span class="duration">1:13</span>
-                    </div>
-                    <div class="controls">
-                        <button class="control-btn play-pause" id="play-btn">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Правая панель с фоном -->
-        <div class="right-panel">
-            <div class="overlay"></div>
-            <div class="particles" id="particles"></div>
-        </div>
-    </div>
+  </div><a href="https://t.me/orenai" class="orenai-btn" target="_blank"><i class="fab fa-telegram"></i>orenai</a> <audio id="audio" src="https://files.catbox.moe/f3keh4.mp3" preload="metadata"></audio>
 
-    <!-- Кнопка Orenai -->
-    <a href="https://t.me/orenai" class="orenai-btn" target="_blank">
-        <i class="fab fa-telegram"></i> orenai
-    </a>
+  <script>
+    (() => {
+      const splash = document.getElementById('splash-screen');
+      const container = document.querySelector('.container');
+      const audio = document.getElementById('audio');
+      const playBtn = document.getElementById('play-btn');
+      const progressBar = document.querySelector('.progress-bar');
+      const currentEl = document.querySelector('.current');
+      const durationEl = document.querySelector('.duration');
+      const particlesEl = document.getElementById('particles');
+      const MAX_PARTICLES = () => window.innerWidth < 600 ? 30 : 50;
 
-    <!-- Аудио элемент -->
-    <audio id="audio" src="https://files.catbox.moe/f3keh4.mp3"></audio>
+      const formatTime = t => {
+        const m = Math.floor(t/60);
+        const s = Math.floor(t%60).toString().padStart(2,'0');
+        return `${m}:${s}`;
+      };
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const splashScreen = document.getElementById('splash-screen');
-            const container = document.querySelector('.container');
-            const audio = document.getElementById('audio');
-            const playBtn = document.getElementById('play-btn');
-            const progressBar = document.querySelector('.progress-bar');
-            const progressArea = document.querySelector('.progress-area');
-            const currentTimeEl = document.querySelector('.current');
-            const durationEl = document.querySelector('.duration');
-            const particlesContainer = document.getElementById('particles');
-            
-            // Установка правильной иконки для кнопки
-            function updatePlayButton() {
-                playBtn.innerHTML = audio.paused ? 
-                    '<i class="fas fa-play"></i>' : 
-                    '<i class="fas fa-pause"></i>';
-            }
-            
-            // Плавное появление заставки
-            setTimeout(() => {
-                splashScreen.style.opacity = '1';
-            }, 300);
-            
-            // Обработка клика по заставке
-            splashScreen.addEventListener('click', function() {
-                // Запуск анимации ухода заставки
-                splashScreen.classList.add('slide-out');
-                
-                // Показ основного контента
-                setTimeout(() => {
-                    container.classList.add('fade-in');
-                    createParticles();
-                }, 800);
-                
-                // Запуск музыки и обновление кнопки
-                setTimeout(() => {
-                    audio.play().then(() => {
-                        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    }).catch(e => {
-                        console.log('Автовоспроизведение заблокировано:', e);
-                    });
-                }, 1000);
-            });
-            
-            // Создание частиц для фона (падающих вниз)
-            function createParticles() {
-                const particleCount = window.innerWidth < 600 ? 30 : 50;
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    
-                    // Случайные параметры
-                    const size = Math.random() * 6 + 3;
-                    const posX = Math.random() * 100;
-                    const duration = Math.random() * 15 + 10;
-                    const delay = Math.random() * 5;
-                    const blur = Math.random() * 5 + 3;
-                    
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.left = `${posX}%`;
-                    particle.style.animationDuration = `${duration}s`;
-                    particle.style.animationDelay = `${delay}s`;
-                    particle.style.filter = `blur(${blur}px)`;
-                    
-                    particlesContainer.appendChild(particle);
-                    
-                    // Удаление частиц после завершения анимации
-                    setTimeout(() => {
-                        particle.remove();
-                    }, duration * 1000);
-                }
-                
-                // Постоянное создание новых частиц
-                setTimeout(createParticles, 1500);
-            }
-            
-            // Обновление прогресс-бара
-            audio.addEventListener('timeupdate', function() {
-                const currentTime = audio.currentTime;
-                const duration = audio.duration;
-                const progressPercent = (currentTime / duration) * 100;
-                progressBar.style.width = `${progressPercent}%`;
-                
-                // Форматирование времени
-                let currentMinutes = Math.floor(currentTime / 60);
-                let currentSeconds = Math.floor(currentTime % 60);
-                let durationMinutes = Math.floor(duration / 60);
-                let durationSeconds = Math.floor(duration % 60);
-                
-                if (currentSeconds < 10) currentSeconds = `0${currentSeconds}`;
-                if (durationSeconds < 10) durationSeconds = `0${durationSeconds}`;
-                
-                currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
-                durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
-            });
-            
-            // Перемотка трека
-            progressArea.addEventListener('click', function(e) {
-                const progressWidth = this.clientWidth;
-                const clickedOffsetX = e.offsetX;
-                const songDuration = audio.duration;
-                
-                audio.currentTime = (clickedOffsetX / progressWidth) * songDuration;
-            });
-            
-            // Управление воспроизведением
-            playBtn.addEventListener('click', function() {
-                if (audio.paused) {
-                    audio.play();
-                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                } else {
-                    audio.pause();
-                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                }
-            });
-            
-            // Обновление кнопки при окончании трека
-            audio.addEventListener('ended', function() {
-                playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                progressBar.style.width = '0%';
-                currentTimeEl.textContent = '0:00';
-            });
-            
-            // Обновление кнопки при изменении состояния
-            audio.addEventListener('play', updatePlayButton);
-            audio.addEventListener('pause', updatePlayButton);
-            
-            // Загрузка длительности трека
-            audio.addEventListener('loadedmetadata', function() {
-                const minutes = Math.floor(audio.duration / 60);
-                const seconds = Math.floor(audio.duration % 60);
-                durationEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            });
-        });
-    </script>
-</body>
+      const updateProgress = () => {
+        const { currentTime, duration } = audio;
+        progressBar.style.width = `${(currentTime/duration)*100}%`;
+        currentEl.textContent = formatTime(currentTime);
+      };
+
+      const togglePlay = () => audio.paused ? audio.play() : audio.pause();
+
+      const onAnimationEnd = e => e.target.remove();
+
+      const spawnParticles = () => {
+        for(let i=0;i<MAX_PARTICLES();i++){
+          const p = document.createElement('div');
+          const size = Math.random()*6+3;
+          p.className='particle';
+          p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;" +
+            `animationDuration:${Math.random()*10+5}s;animationDelay:${Math.random()*3}s`; 
+          p.addEventListener('animationend', onAnimationEnd);
+          particlesEl.append(p);
+        }
+      };
+
+      let particleInterval;
+      const startParticles = () => {
+        particleInterval = setInterval(spawnParticles,1500);
+      };
+
+      // Splash handlers
+      setTimeout(()=> splash.style.opacity=1,300);
+      splash.onclick = () => {
+        splash.style.transform='translateX(100%)';
+        splash.style.opacity=0;
+        setTimeout(()=>{
+          container.style.opacity=1;
+          startParticles();
+          audio.play().catch(()=>{});
+        },800);
+      };
+
+      // Audio events
+      audio.addEventListener('loadedmetadata',()=> durationEl.textContent=formatTime(audio.duration));
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('ended', ()=>{
+        playBtn.innerHTML='<i class="fas fa-play"></i>';
+        progressBar.style.width='0%';
+      });
+      playBtn.onclick = () => togglePlay();
+      audio.addEventListener('play', ()=> playBtn.innerHTML='<i class="fas fa-pause"></i>');
+      audio.addEventListener('pause',()=> playBtn.innerHTML='<i class="fas fa-play"></i>');
+
+      // Seek
+      document.querySelector('.progress-area').onclick = e => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        audio.currentTime = ((e.clientX - rect.left)/rect.width)*audio.duration;
+      };
+
+      // Resize -> recalc particles count
+      let resizeTimer;
+      window.onresize = () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(()=>{
+          clearInterval(particleInterval);
+          document.querySelectorAll('.particle').forEach(p=>p.remove());
+          startParticles();
+        },300);
+      };
+    })();
+  </script></body>
 </html>
