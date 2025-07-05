@@ -1,582 +1,179 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!DOCTYPE html><html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orenai | Профиль</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            overflow: hidden;
-            height: 100vh;
-            background: linear-gradient(135deg, rgba(44, 44, 44, 0.95), rgba(26, 26, 26, 0.95));
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>orenai</title>
+  <link rel="icon" href="data:," />
+  <style>
+    /* ---------- ГЛОБАЛЬНЫЕ СТИЛИ ---------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; background: #111; }/* ---------- ФОНОВАЯ АНИМАЦИЯ (блики) ---------- */
+body {
+  background:
+    linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.05) 75%);
+  background-size: 60px 60px;
+  position: relative;
+}
+/* Размытие бликов */
+body::after {
+  content: '';
+  position: absolute; top:0; left:0; width:100%; height:100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+  animation: blink 3s infinite;
+  pointer-events: none;
+}
+@keyframes blink {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.1; }
+}
 
-        /* Заставка */
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
-            cursor: pointer;
-        }
+/* ---------- PRELOADER ---------- */
+#preloader {
+  position: absolute; top:0; left:0; width:100%; height:100%;
+  display:flex; align-items:center; justify-content:center;
+  z-index: 10;
+}
+#playPauseBtn {
+  width: 80px; height: 80px; border: none; border-radius: 50%;
+  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  box-shadow: 0 0 15px rgba(255,0,255,0.7), 0 0 15px rgba(0,255,255,0.7);
+  font-size: 36px; color: #fff; cursor: pointer;
+  transition: transform 0.6s ease, opacity 0.3s;
+}
+#playPauseBtn.playing { transform: translateX(200px); }
 
-        .splash-content {
-            text-align: center;
-            padding: 20px;
-        }
+/* ---------- ОСНОВНОЙ КОНТЕНТ ---------- */
+#mainContent {
+  position: absolute; top:50%; left:50%; transform: translate(-50%, -50%);
+  text-align: center; color: #fff;
+  opacity: 0; transition: opacity 0.8s ease;
+}
+#mainContent.visible { opacity: 1; }
 
-        .splash-text {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #ff00cc, #3333ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 20px rgba(255, 0, 204, 0.4);
-            animation: textGlow 2s infinite alternate;
-        }
+/* Аватар */
+.avatar-wrapper {
+  width: 160px; height: 160px; margin: 0 auto;
+  border: 6px solid;
+  border-image: linear-gradient(135deg, #ff00ff, #00ffff) 1;
+  border-radius: 50%; overflow: hidden;
+}
+.avatar-wrapper img { width:100%; height:100%; object-fit:cover; }
 
-        /* Основной контент */
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 600px;
-            opacity: 0;
-            transition: opacity 1.5s ease;
-            position: relative;
-            z-index: 2;
-            padding: 20px;
-        }
+/* Подпись */
+.subtitle { margin-top: 12px; font-size: 18px; opacity: 0.8; }
 
-        /* Анимация фона */
-        body::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, 
-                rgba(255,255,255,0.05) 25%, 
-                transparent 25%, 
-                transparent 50%, 
-                rgba(255,255,255,0.05) 50%, 
-                rgba(255,255,255,0.05) 75%, 
-                transparent 75%, 
-                transparent);
-            background-size: 60px 60px;
-            transform: rotate(30deg);
-            animation: animateBackground 3s linear infinite;
-            z-index: 0;
-        }
+/* Плеер */
+.player { margin-top: 24px; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; width: 280px; margin-left: auto; margin-right: auto; }
+.player .title { font-size: 20px; margin-bottom: 10px; }
+.progress-bar input[type=range] { width: 100%; }
+.time { font-size: 14px; margin-top: 6px; display: flex; justify-content: space-between; }
+#toggleBtn { margin-top: 12px; width: 60px; height: 60px; border: none; border-radius: 50%;
+  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  box-shadow: 0 0 10px rgba(255,0,255,0.7), 0 0 10px rgba(0,255,255,0.7);
+  font-size: 28px; color: #fff; cursor: pointer;
+  transition: transform 0.3s;
+}
+#toggleBtn:active { transform: scale(0.95); }
 
-        .avatar {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            border: 4px solid rgba(255,255,255,0.1);
-            background: linear-gradient(45deg, #ff00cc, #3333ff);
-            padding: 6px;
-            margin: 0 auto 30px;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(51, 51, 255, 0.3);
-            transition: all 0.4s ease;
-            position: relative;
-            z-index: 2;
-        }
+/* Telegram-кнопка */
+.tg-btn {
+  display: inline-flex; align-items:center; margin-top: 24px;
+  padding: 12px 24px; border-radius: 30px; text-decoration: none;
+  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  box-shadow: 0 0 10px rgba(255,0,255,0.7), 0 0 10px rgba(0,255,255,0.7);
+  color: #fff; font-size: 16px;
+  transition: opacity 0.3s;
+}
+.tg-btn:hover { opacity: 0.8; }
 
-        .avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(51, 51, 255, 0.6);
-        }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .bio {
-            font-size: 1.1rem;
-            color: #bbb;
-            margin-bottom: 35px;
-            line-height: 1.6;
-            text-align: center;
-            max-width: 80%;
-        }
-
-        /* Музыкальный плеер */
-        .music-player {
-            width: 100%;
-            max-width: 500px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .track-info {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .track-name {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .progress-area {
-            height: 6px;
-            width: 100%;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            margin: 25px 0;
-            cursor: pointer;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff00cc, #3333ff);
-            border-radius: 10px;
-            position: relative;
-            transition: width 0.1s linear;
-        }
-
-        .progress-bar::before {
-            content: "";
-            position: absolute;
-            height: 12px;
-            width: 12px;
-            border-radius: 50%;
-            background: #fff;
-            right: -5px;
-            top: 50%;
-            transform: translateY(-50%);
-            box-shadow: 0 0 10px rgba(255, 0, 204, 0.8);
-        }
-
-        .timer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-            font-size: 0.85rem;
-            color: #aaa;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        .control-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            color: #fff;
-            font-size: 1.2rem;
-        }
-
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-
-        .control-btn.play-pause {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(90deg, #ff00cc, #3333ff);
-            box-shadow: 0 0 20px rgba(51, 51, 255, 0.5);
-        }
-
-        .control-btn.play-pause:hover {
-            box-shadow: 0 0 30px rgba(51, 51, 255, 0.8);
-        }
-
-        /* Кнопка Orenai */
-        .orenai-btn {
-            position: relative;
-            padding: 12px 35px;
-            background: linear-gradient(90deg, #ff00cc, #3333ff);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-            box-shadow: 0 5px 20px rgba(51, 51, 255, 0.4);
-            transition: all 0.3s ease;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .orenai-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(51, 51, 255, 0.6);
-            letter-spacing: 2px;
-        }
-
-        /* Частицы */
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.7);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
-            animation: fall 15s infinite linear;
-        }
-
-        /* Анимации */
-        @keyframes textGlow {
-            0% {
-                text-shadow: 0 0 20px rgba(255, 0, 204, 0.4);
-            }
-            100% {
-                text-shadow: 0 0 30px rgba(51, 51, 255, 0.7), 0 0 40px rgba(51, 51, 255, 0.4);
-            }
-        }
-
-        @keyframes animateBackground {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 60px 60px;
-            }
-        }
-
-        @keyframes fall {
-            0% {
-                transform: translateY(-100px) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(calc(100vh + 100px)) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        .fade-in {
-            opacity: 1 !important;
-        }
-
-        .slide-out {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-
-        /* Мобильная адаптация */
-        @media (max-width: 768px) {
-            .avatar {
-                width: 150px;
-                height: 150px;
-                margin-bottom: 25px;
-            }
-            
-            .bio {
-                font-size: 1rem;
-                margin-bottom: 25px;
-            }
-            
-            .music-player {
-                padding: 20px;
-            }
-            
-            .track-name {
-                font-size: 1.3rem;
-            }
-            
-            .control-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
-            }
-            
-            .control-btn.play-pause {
-                width: 55px;
-                height: 55px;
-            }
-            
-            .splash-text {
-                font-size: 2.5rem;
-            }
-            
-            .orenai-btn {
-                font-size: 1rem;
-                padding: 10px 25px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .avatar {
-                width: 130px;
-                height: 130px;
-                margin-bottom: 20px;
-            }
-            
-            .bio {
-                font-size: 0.95rem;
-                margin-bottom: 20px;
-            }
-            
-            .music-player {
-                padding: 15px;
-            }
-            
-            .track-name {
-                font-size: 1.2rem;
-            }
-            
-            .controls {
-                gap: 25px;
-            }
-            
-            .splash-text {
-                font-size: 2rem;
-            }
-            
-            .progress-area {
-                margin: 20px 0;
-            }
-        }
-    </style>
+  </style>
 </head>
 <body>
-    <!-- Заставка -->
-    <div id="splash-screen">
-        <div class="splash-content">
-            <div class="splash-text">я хз че это за говно</div>
-        </div>
+  <!-- Preloader -->
+  <div id="preloader">
+    <button id="playPauseBtn">⏸️</button>
+  </div>  <!-- Main Content -->  <div id="mainContent">
+    <div class="avatar-wrapper">
+      <img src="https://files.catbox.moe/quj9vo.jpg" alt="Avatar">
     </div>
+    <div class="subtitle">грызть какашке</div><div class="player">
+  <div class="title">Just Dance</div>
+  <div class="progress-bar">
+    <input type="range" id="seek" value="0" min="0" max="100">
+  </div>
+  <div class="time"><span id="current">0:00</span><span id="duration">1:13</span></div>
+  <button id="toggleBtn">⏸️</button>
+</div>
 
-    <!-- Основной контент -->
-    <div class="container">
-        <!-- Аватарка -->
-        <div class="avatar">
-            <img src="https://files.catbox.moe/quj9vo.jpg" alt="Аватар">
-        </div>
-        
-        <!-- Описание -->
-        <p class="bio">грызть какашке</p>
-        
-        <!-- Музыкальный плеер -->
-        <div class="music-player">
-            <div class="track-info">
-                <div class="track-name">Just Dance</div>
-            </div>
-            <div class="progress-area">
-                <div class="progress-bar"></div>
-            </div>
-            <div class="timer">
-                <span class="current">0:00</span>
-                <span class="duration">1:13</span>
-            </div>
-            <div class="controls">
-                <button class="control-btn play-pause" id="play-btn">
-                    <i class="fas fa-play"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Кнопка Orenai -->
-        <a href="https://t.me/orenai" class="orenai-btn" target="_blank">
-            <i class="fab fa-telegram"></i> orenai
-        </a>
-    </div>
+<a href="https://t.me/orenai" class="tg-btn" target="_blank" rel="noopener noreferrer">
+  <!-- Telegram SVG Icon -->
+  <svg width="20" height="20" viewBox="0 0 240 240" style="margin-right:8px; filter: brightness(1.2);">
+    <path d="M120 0C53.7 0 0 53.7 0 120s53.7 120 120 120 120-53.7 120-120S186.3 0 120 0zm57.2 82.6l-22.8 107.5c-1.7 7.5-6.2 9.4-12.5 5.9l-34.6-25.5-16.7 16.1c-1.8 1.8-3.3 3.3-6.7 3.3l2.4-34.4L137 121c2.3 0 3.7-0.9 5-2.3l11.2-10.9c2.3-2.3-0.5-3.6-3.3-1.3l-45 29.1-19.3-6.1c-6.6-2-6.7-6.6 1.4-9.8l75.4-29.1c5.4-2.1 10.1 1.3 8.4 9.9z" fill="#fff"/>
+  </svg>
+  orenai
+</a>
 
-    <!-- Частицы -->
-    <div class="particles" id="particles"></div>
+  </div>  <!-- Audio --><audio id="bgMusic" src="https://files.catbox.moe/f3keh4.mp3" preload="auto"></audio>
 
-    <!-- Аудио элемент -->
-    <audio id="audio" src="https://files.catbox.moe/f3keh4.mp3"></audio>
+  <script>
+    const audio = document.getElementById('bgMusic');
+    const btnPre = document.getElementById('playPauseBtn');
+    const preloader = document.getElementById('preloader');
+    const main = document.getElementById('mainContent');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const seek = document.getElementById('seek');
+    const currentTimeEl = document.getElementById('current');
+    const durationEl = document.getElementById('duration');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const splashScreen = document.getElementById('splash-screen');
-            const container = document.querySelector('.container');
-            const audio = document.getElementById('audio');
-            const playBtn = document.getElementById('play-btn');
-            const progressBar = document.querySelector('.progress-bar');
-            const progressArea = document.querySelector('.progress-area');
-            const currentTimeEl = document.querySelector('.current');
-            const durationEl = document.querySelector('.duration');
-            const particlesContainer = document.getElementById('particles');
-            
-            // Установка правильной иконки для кнопки
-            function updatePlayButton() {
-                playBtn.innerHTML = audio.paused ? 
-                    '<i class="fas fa-play"></i>' : 
-                    '<i class="fas fa-pause"></i>';
-            }
-            
-            // Плавное появление заставки
-            setTimeout(() => {
-                splashScreen.style.opacity = '1';
-            }, 300);
-            
-            // Обработка клика по заставке
-            splashScreen.addEventListener('click', function() {
-                // Запуск анимации ухода заставки
-                splashScreen.classList.add('slide-out');
-                
-                // Показ основного контента
-                setTimeout(() => {
-                    container.classList.add('fade-in');
-                    createParticles();
-                }, 800);
-                
-                // Запуск музыки и обновление кнопки
-                setTimeout(() => {
-                    audio.play().then(() => {
-                        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                    }).catch(e => {
-                        console.log('Автовоспроизведение заблокировано:', e);
-                    });
-                }, 1000);
-            });
-            
-            // Создание частиц для фона (падающих вниз)
-            function createParticles() {
-                const particleCount = window.innerWidth < 600 ? 30 : 50;
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    
-                    // Случайные параметры
-                    const size = Math.random() * 6 + 3;
-                    const posX = Math.random() * 100;
-                    const duration = Math.random() * 15 + 10;
-                    const delay = Math.random() * 5;
-                    const blur = Math.random() * 5 + 3;
-                    
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.left = `${posX}%`;
-                    particle.style.animationDuration = `${duration}s`;
-                    particle.style.animationDelay = `${delay}s`;
-                    particle.style.filter = `blur(${blur}px)`;
-                    
-                    particlesContainer.appendChild(particle);
-                    
-                    // Удаление частиц после завершения анимации
-                    setTimeout(() => {
-                        particle.remove();
-                    }, duration * 1000);
-                }
-                
-                // Постоянное создание новых частиц
-                setTimeout(createParticles, 1500);
-            }
-            
-            // Обновление прогресс-бара
-            audio.addEventListener('timeupdate', function() {
-                const currentTime = audio.currentTime;
-                const duration = audio.duration;
-                const progressPercent = (currentTime / duration) * 100;
-                progressBar.style.width = `${progressPercent}%`;
-                
-                // Форматирование времени
-                let currentMinutes = Math.floor(currentTime / 60);
-                let currentSeconds = Math.floor(currentTime % 60);
-                let durationMinutes = Math.floor(duration / 60);
-                let durationSeconds = Math.floor(duration % 60);
-                
-                if (currentSeconds < 10) currentSeconds = `0${currentSeconds}`;
-                if (durationSeconds < 10) durationSeconds = `0${durationSeconds}`;
-                
-                currentTimeEl.textContent = `${currentMinutes}:${currentSeconds}`;
-                durationEl.textContent = `${durationMinutes}:${durationSeconds}`;
-            });
-            
-            // Перемотка трека
-            progressArea.addEventListener('click', function(e) {
-                const progressWidth = this.clientWidth;
-                const clickedOffsetX = e.offsetX;
-                const songDuration = audio.duration;
-                
-                audio.currentTime = (clickedOffsetX / progressWidth) * songDuration;
-            });
-            
-            // Управление воспроизведением
-            playBtn.addEventListener('click', function() {
-                if (audio.paused) {
-                    audio.play();
-                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                } else {
-                    audio.pause();
-                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                }
-            });
-            
-            // Обновление кнопки при окончании трека
-            audio.addEventListener('ended', function() {
-                playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                progressBar.style.width = '0%';
-                currentTimeEl.textContent = '0:00';
-            });
-            
-            // Обновление кнопки при изменении состояния
-            audio.addEventListener('play', updatePlayButton);
-            audio.addEventListener('pause', updatePlayButton);
-            
-            // Загрузка длительности трека
-            audio.addEventListener('loadedmetadata', function() {
-                const minutes = Math.floor(audio.duration / 60);
-                const seconds = Math.floor(audio.duration % 60);
-                durationEl.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            });
-        });
-    </script>
-</body>
+    // Формат времени мм:сс
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    // При загрузке метаданных
+    audio.addEventListener('loadedmetadata', () => {
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    // Обновление полосы и времени
+    audio.addEventListener('timeupdate', () => {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      seek.value = pct;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+
+    // Перемотка
+    seek.addEventListener('input', () => {
+      audio.currentTime = (seek.value / 100) * audio.duration;
+    });
+
+    // Обработчик для обеих кнопок
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play();
+        btnPre.classList.add('playing');
+        btnPre.textContent = '▶️';
+        toggleBtn.textContent = '⏸️';
+        // Показать главный экран после начала трека
+        setTimeout(() => {
+          preloader.style.opacity = '0';
+          setTimeout(() => preloader.style.display = 'none', 600);
+          main.classList.add('visible');
+        }, 300);
+      } else {
+        audio.pause();
+        btnPre.classList.remove('playing');
+        btnPre.textContent = '⏸️';
+        toggleBtn.textContent = '▶️';
+      }
+    }
+
+    btnPre.addEventListener('click', togglePlay);
+    toggleBtn.addEventListener('click', togglePlay);
+  </script></body>
 </html>
